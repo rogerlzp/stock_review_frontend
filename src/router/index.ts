@@ -39,6 +39,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/MarketReview/LimitUp.vue')
       }
     ]
+  },
+  {
+    path: '/market-review/concept-stocks',
+    name: '概念成分股',
+    component: () => import('@/views/MarketReview/ConceptStocks.vue')
   }
 ]
 

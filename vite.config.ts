@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import path from 'path';
+import vue from '@vitejs/plugin-vue'
+import path from 'path'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [vue()],
@@ -17,7 +17,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 8000,
+    port: 8001,
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
@@ -25,4 +25,4 @@ export default defineConfig({
       },
     },
   },
-});
+})

@@ -1,26 +1,15 @@
 import axios from 'axios'
-import type { MarketOverviewData, SectorFlowData, TopListData, ConceptData, LimitUpData } from '@/types/marketReview'
+import type { ConceptData } from '@/types/marketReview'
 
 const api = axios.create({
-  baseURL: '/api/v1'
+  baseURL: '/api/v1/market-review',
+  timeout: 10000
 })
 
-export async function getMarketOverview(tradeDate: string) {
-  return api.get<{ data: MarketOverviewData }>(`/market-review/market-overview/${tradeDate}`)
-}
-
-export async function getSectorFlow(tradeDate: string) {
-  return api.get<{ data: SectorFlowData[] }>(`/market-review/sector-flow/${tradeDate}`)
-}
-
-export async function getTopList(tradeDate: string) {
-  return api.get<{ data: TopListData[] }>(`/market-review/top-list/${tradeDate}`)
-}
-
 export async function getConcepts(tradeDate: string) {
-  return api.get<{ data: ConceptData[] }>(`/market-review/concepts/${tradeDate}`)
+  return api.get<{ data: ConceptData[] }>(`/concepts/${tradeDate}`)
 }
 
-export async function getLimitUpStocks(tradeDate: string) {
-  return api.get<{ data: LimitUpData[] }>(`/market-review/limit-up-stocks/${tradeDate}`)
+export async function getConceptStocks(tradeDate: string, conceptCode: string) {
+  return api.get<{ data: any[] }>(`/concept-stocks/${tradeDate}/${conceptCode}`)
 }
