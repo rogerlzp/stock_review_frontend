@@ -25,5 +25,14 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '/api/v1') 
       },
     },
+    middlewares: [
+      (req, res, next) => {
+        // 如果请求的不是静态资源，返回 index.html
+        if (!req.url?.includes('.')) {
+          req.url = '/index.html'
+        }
+        next()
+      }
+    ]
   },
 })

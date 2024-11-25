@@ -1,50 +1,72 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
-const routes: RouteRecordRaw[] = [
+export const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'root',
-    redirect: '/market-review'
-  },
-  {
-    path: '/market-review',
-    name: '市场复盘',
-    component: () => import('@/views/MarketReview/index.vue'),
     redirect: '/market-review/overview',
     children: [
       {
-        path: 'overview',
-        name: '市场概览',
-        component: () => import('@/views/MarketReview/Overview.vue'),
-      },
-      {
-        path: 'sector-flow',
-        name: '板块资金流向',
-        component: () => import('@/views/MarketReview/SectorFlow.vue'),
-      },
-      {
-        path: 'top-list',
-        name: '龙虎榜数据',
-        component: () => import('@/views/MarketReview/TopList.vue'),
-      },
-      {
-        path: 'concepts',
-        name: '概念题材分析',
-        component: () => import('@/views/MarketReview/Concepts.vue'),
-      },
-      {
-        path: 'limit-up',
-        name: '涨停板分析',
-        component: () => import('@/views/MarketReview/LimitUp.vue'),
-      },
-    ],
-  },
-  {
-    path: '/market-review/concept-stocks',
-    name: '概念成分股',
-    component: () => import('@/views/MarketReview/ConceptStocks.vue'),
-  },
+        path: 'market-review',
+        name: 'MarketReview',
+        component: () => import('@/views/MarketReview/index.vue'),
+        meta: {
+          title: '市场复盘',
+          icon: 'el-icon-data-line'
+        },
+        children: [
+          {
+            path: 'overview',
+            name: 'Overview',
+            component: () => import('@/views/MarketReview/Overview.vue'),
+            meta: {
+              title: '市场概览'
+            }
+          },
+          {
+            path: 'sector-flow',
+            name: 'SectorFlow',
+            component: () => import('@/views/MarketReview/SectorFlow.vue'),
+            meta: {
+              title: '板块资金流向'
+            }
+          },
+          {
+            path: 'top-list',
+            name: 'TopList',
+            component: () => import('@/views/MarketReview/TopList.vue'),
+            meta: {
+              title: '龙虎榜数据'
+            }
+          },
+          {
+            path: 'concepts',
+            name: 'Concepts',
+            component: () => import('@/views/MarketReview/Concepts.vue'),
+            meta: {
+              title: '概念题材分析'
+            }
+          },
+          {
+            path: 'limit-up',
+            name: 'LimitUp',
+            component: () => import('@/views/MarketReview/LimitUp.vue'),
+            meta: {
+              title: '涨停板分析'
+            }
+          },
+          {
+            path: 'technical',
+            name: 'Technical',
+            component: () => import('@/views/TechnicalAnalysis/index.vue'),
+            meta: {
+              title: '技术分析'
+            }
+          }
+        ]
+      }
+    ]
+  }
 ]
 
 const router = createRouter({
