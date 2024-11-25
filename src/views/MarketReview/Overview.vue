@@ -104,7 +104,7 @@ const fetchData = async (date: string) => {
   try {
     console.log('Fetching market overview data for date:', date)
     const response = await getMarketOverview(date)
-    data.value = response.data.data
+    data.value = response.data
     console.log('Processed data:', data.value)
   } catch (error) {
     console.error('获取市场概览数据失败:', error)

@@ -126,7 +126,7 @@ const fetchData = async (date: string) => {
   try {
     console.log('Fetching limit up data for date:', date)
     const response = await getLimitUpStocks(date)
-    data.value = response.data.data.map(item => ({
+    data.value = response.data.map(item => ({
       ...item,
       amount: Number(formatAmount(item.amount))
     }))

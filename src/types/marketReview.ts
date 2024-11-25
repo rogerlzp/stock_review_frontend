@@ -1,80 +1,146 @@
-// 指数数据类型
-export interface IndexData {
-  code: string;
-  name: string;
-  totalMv: number;      // 总市值（亿元）
-  floatMv: number;      // 流通市值（亿元）
-  turnoverRate: number; // 换手率
-  turnoverRateF: number; // 自由流通换手率
-  pe: number;          // 市盈率
-  peTtm: number;       // 市盈率TTM
-  pb: number;          // 市净率
+// 通用响应接口
+interface BaseResponse<T> {
+  code: number
+  message: string
+  data: T
 }
 
-// 市场概览数据类型
+// 市场概览数据
 export interface MarketOverviewData {
-  indices: IndexData[];
-  upCount: number;
-  downCount: number;
-  totalAmount: number;
+  date: string
+  shangzheng: {
+    close: number
+    change: number
+    pctChange: number
+    volume: number
+    amount: number
+  }
+  shenzheng: {
+    close: number
+    change: number
+    pctChange: number
+    volume: number
+    amount: number
+  }
+  chuangye: {
+    close: number
+    change: number
+    pctChange: number
+    volume: number
+    amount: number
+  }
 }
 
-// 板块资金流向数据类型
+export type MarketOverviewResponse = BaseResponse<MarketOverviewData>
+
+// 板块资金流向数据
 export interface SectorFlowData {
-  tsCode: string;
-  name: string;
-  close: number;
-  pctChange: number;
-  netAmount: number;
-  netAmountRate: number;
-  buyElgAmount: number;
-  buyElgAmountRate: number;
-  buyLgAmount: number;
-  buyLgAmountRate: number;
-  buyMdAmount: number;
-  buyMdAmountRate: number;
-  buySmAmount: number;
-  buySmAmountRate: number;
-  hotStock: string;
-  rank: number;
+  rank: number
+  name: string
+  close: number
+  pctChange: number
+  netAmount: number
+  netAmountRate: number
+  buyElgAmount: number
+  buyElgAmountRate: number
+  buyLgAmount: number
+  buyLgAmountRate: number
+  buyMdAmount: number
+  buyMdAmountRate: number
+  buySmAmount: number
+  buySmAmountRate: number
+  hotStock: string
 }
 
-// 龙虎榜数据类型
+export interface SectorFlowResponseData {
+  data: SectorFlowData[]
+  total: number
+}
+
+export type SectorFlowResponse = BaseResponse<SectorFlowResponseData>
+
+// 龙虎榜数据
 export interface TopListData {
-  tsCode: string;
-  name: string;
-  close: number;
-  change: number;
-  turnoverRate: number;
-  amount: number;
-  reason: string;
-  buyAmount: number;
-  sellAmount: number;
-  buyInst: string[];
-  sellInst: string[];
-  netRate: number;
-  netAmount: number;
-  totalTurnover: number;
+  stockCode: string
+  stockName: string
+  close: number
+  pctChange: number
+  turnoverRate: number
+  amount: number
+  buyAmount: number
+  sellAmount: number
+  netAmount: number
+  reason: string
 }
 
-// 概念题材数据类型
-export interface ConceptData {
-  tsCode: string;
-  conceptName: string;
-  stockCount: number;
-  limitUpCount: number;
-  upCount: number;
-  leadingStocks: string[];
-  hotNum: number;
-  description: string;
+export interface TopListResponseData {
+  data: TopListData[]
+  total: number
 }
 
-// 涨停板数据类型
+export type TopListResponse = BaseResponse<TopListResponseData>
+
+// 涨停板数据
 export interface LimitUpData {
-  stockCode: string;
-  stockName: string;
-  limitUpTime: string;
-  limitUpReason: string;
-  turnoverRate: number;
-  amount: number;
+  stockCode: string
+  stockName: string
+  close: number
+  limitUpType: string
+  firstLimitUpTime: string
+  lastLimitUpTime: string
+  limitUpDays: number
+  turnoverRate: number
+  amount: number
+  circulationMarketValue: number
+  reason: string
 }
+
+export interface LimitUpResponseData {
+  data: LimitUpData[]
+  total: number
+  statistics: {
+    totalCount: number
+    firstCount: number
+    secondCount: number
+    moreCount: number
+  }
+}
+
+export type LimitUpResponse = BaseResponse<LimitUpResponseData>
+
+// 概念题材数据
+export interface ConceptData {
+  tsCode: string
+  conceptName: string
+  stockCount: number
+  limitUpCount: number
+  upCount: number
+  leadingStocks: string[]
+  hotNum: number
+  description: string
+}
+
+export interface ConceptResponseData {
+  data: ConceptData[]
+}
+
+export type ConceptResponse = BaseResponse<ConceptResponseData>
+
+// 概念成分股数据
+export interface ConceptStockData {
+  stockCode: string
+  stockName: string
+  close: number
+  pctChange: number
+  turnoverRate: number
+  amount: number
+  circulationMarketValue: number
+  concepts: string[]
+}
+
+export interface ConceptStockResponseData {
+  data: ConceptStockData[]
+  total: number
+}
+
+export type ConceptStockResponse = BaseResponse<ConceptStockResponseData>

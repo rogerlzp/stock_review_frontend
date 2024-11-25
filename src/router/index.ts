@@ -1,5 +1,5 @@
-import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -16,35 +16,35 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'overview',
         name: '市场概览',
-        component: () => import('@/views/MarketReview/Overview.vue')
+        component: () => import('@/views/MarketReview/Overview.vue'),
       },
       {
         path: 'sector-flow',
         name: '板块资金流向',
-        component: () => import('@/views/MarketReview/SectorFlow.vue')
+        component: () => import('@/views/MarketReview/SectorFlow.vue'),
       },
       {
         path: 'top-list',
         name: '龙虎榜数据',
-        component: () => import('@/views/MarketReview/TopList.vue')
+        component: () => import('@/views/MarketReview/TopList.vue'),
       },
       {
         path: 'concepts',
         name: '概念题材分析',
-        component: () => import('@/views/MarketReview/Concepts.vue')
+        component: () => import('@/views/MarketReview/Concepts.vue'),
       },
       {
         path: 'limit-up',
         name: '涨停板分析',
-        component: () => import('@/views/MarketReview/LimitUp.vue')
-      }
-    ]
+        component: () => import('@/views/MarketReview/LimitUp.vue'),
+      },
+    ],
   },
   {
     path: '/market-review/concept-stocks',
     name: '概念成分股',
-    component: () => import('@/views/MarketReview/ConceptStocks.vue')
-  }
+    component: () => import('@/views/MarketReview/ConceptStocks.vue'),
+  },
 ]
 
 const router = createRouter({

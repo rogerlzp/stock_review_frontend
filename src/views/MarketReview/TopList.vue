@@ -271,7 +271,7 @@ const fetchData = async (date: string) => {
   loading.value = true
   try {
     const response = await getTopList(date)
-    data.value = response.data.data
+    data.value = response.data
   } catch (error) {
     console.error('获取龙虎榜数据失败:', error)
   }

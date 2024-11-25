@@ -1,6 +1,6 @@
 export const ENV = {
   development: {
-    API_URL: 'http://localhost:8000',
+    API_URL: 'http://localhost:8000/api/v1',
   },
   production: {
     API_URL: 'https://api.yourproduction.com',

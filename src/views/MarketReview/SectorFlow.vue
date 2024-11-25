@@ -135,7 +135,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Setting } from '@element-plus/icons-vue'
 import { getSectorFlow } from '@/services/marketReview'
 import type { SectorFlowData } from '@/types/marketReview'
-import { formatNumber, formatPercent } from '@/utils/format'
+import { formatNumber, formatPercent, formatAmount } from '@/utils/format'
 
 const loading = ref(false)
 const data = ref<SectorFlowData[]>([])
@@ -183,7 +183,7 @@ const fetchData = async (date: string) => {
   try {
     console.log('Fetching sector flow data for date:', date)
     const response = await getSectorFlow(date)
-    data.value = response.data.data
+    data.value = response.data
     console.log('Processed data:', data.value)
   } catch (error) {
     console.error('获取板块资金流向数据失败:', error)
@@ -191,7 +191,15 @@ const fetchData = async (date: string) => {
   loading.value = false
 }
 
-const availableColumns = [
+interface ColumnConfig {
+  prop: string
+  label: string
+  sortable?: boolean
+  formatter?: (val: number) => string
+  required?: boolean
+}
+
+const availableColumns: ColumnConfig[] = [
   { prop: 'close', label: '收盘点位', sortable: true },
   { prop: 'pctChange', label: '涨跌幅', sortable: true,
     formatter: (val: number) => formatPercent(val) },
@@ -231,8 +239,8 @@ const saveColumnSettings = () => {
   showColumnSettings.value = false
 }
 
-const getValueClass = (value: number) => {
-  if (!value) return ''
+const getValueClass = (value: number | undefined) => {
+  if (!value && value !== 0) return ''
   return value >= 0 ? 'up' : 'down'
 }
 
