@@ -3,6 +3,7 @@ import type {
   ConceptStockResponse,
   LimitUpResponse,
   MarketOverviewResponse,
+  MarketTrendResponse,
   SectorFlowResponse,
   TopListResponse,
 } from '@/types/marketReview'
@@ -47,4 +48,14 @@ export const getConceptStocks = (date: string, code: string) => {
       code
     }
   })
+}
+
+// 市场趋势
+export const getMarketTrend = (params: {
+  index_code: string
+  start_date: string
+  end_date: string
+  metrics: string[]
+}) => {
+  return request.get<MarketTrendResponse>('/api/market-review/market-trend', { params })
 }

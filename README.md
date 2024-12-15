@@ -24,6 +24,12 @@
   - 涨停原因
   - 涨停统计
   - 连板分析
+- 市场趋势分析
+  - 指数趋势分析
+    - 支持多指数选择（上证指数、深证成指、上证50等）
+    - 多指标对比（总市值、换手率、市盈率等）
+    - 自定义时间范围
+    - 北向资金和融资融券数据整合
 
 ## 技术栈
 
@@ -131,3 +137,103 @@ yarn lint:fix
 开发服务器默认运行在：
 - URL: http://localhost:5173/
 - 代理配置：API 请求代理到 http://localhost:8000
+
+## 路由说明
+
+### 市场分析模块 (/market-review)
+
+- `/market-review/overview` - 市场概览
+  - 展示指数行情、市场资金、涨跌统计等整体市场信息
+- `/market-review/volume-price` - 量价分析
+  - 展示市场成交量和价格走势分析
+- `/market-review/sector-flow` - 板块资金流向
+  - 展示行业板块和概念板块的资金流向情况
+- `/market-review/top-list` - 龙虎榜
+  - 展示每日龙虎榜数据和机构交易情况
+- `/market-review/concepts` - 概念题材
+  - 展示热门概念和相关股票分析
+- `/market-review/limit-up` - 涨停分析
+  - 展示涨停板统计、连板分析等信息
+- `/market-review/technical` - 技术分析
+  - 展示市场技术指标分析
+- `/market-review/stock/:code` - 股票详情
+  - 展示个股详细信息，包括：
+    - 基本交易数据（开盘价、最高价、最低价等）
+    - 涨停信息（涨停时间、原因、连板情况等）
+    - 成交量分析（30日成交量走势）
+    - 连板历史（针对连板股票）
+
+### API 接口
+
+所有接口都以 `/api/v1` 为前缀，主要包括：
+
+#### 市场分析接口
+- GET `/api/v1/market/overview` - 获取市场概览数据
+- GET `/api/v1/market/sector-flow` - 获取板块资金流向
+- GET `/api/v1/market/top-list` - 获取龙虎榜数据
+- GET `/api/v1/market/limit-up` - 获取涨停板数据
+- GET `/api/v1/market/technical` - 获取技术指标数据
+- GET `/api/v1/market/concepts` - 获取概念题材数据
+- GET `/api/v1/market/daily-review` - 获取每日复盘数据
+
+#### 股票详情接口
+- GET `/api/v1/stock/detail/{ts_code}` - 获取股票详细信息
+- GET `/api/v1/stock/limit-history/{ts_code}` - 获取连板历史数据
+- GET `/api/v1/stock/volume-analysis/{ts_code}` - 获取成交量分析数据
+
+所有接口都支持 `trade_date` 参数（格式：YYYYMMDD）来指定查询日期。
+
+## API 接口文档
+
+### 量价分析接口
+
+#### 市场量价分析
+- 获取市场量价数据
+  ```
+  GET /api/volume-price/market/volume
+  参数：
+  - date: string (YYYY-MM-DD)
+  ```
+
+- 获取市场异常股票
+  ```
+  GET /api/volume-price/market/anomaly
+  参数：
+  - date: string (YYYY-MM-DD)
+  - type: string (volume_up | volume_down | volume_decrease_up | volume_decrease_down)
+  ```
+
+- 获取市场量价异常
+  ```
+  GET /api/volume-price/market
+  参数：
+  - trade_date: string (YYYY-MM-DD)
+  - anomaly_types?: string[]
+  - limit?: number
+  - sort_by?: string
+  ```
+
+#### 个股量价分析
+- 获取股票基本信息
+  ```
+  GET /api/volume-price/stock/info
+  参数：
+  - code: string
+  - date: string (YYYY-MM-DD)
+  ```
+
+- 获取个股量价数据
+  ```
+  GET /api/volume-price/stock/volume-price
+  参数：
+  - code: string
+  - date: string (YYYY-MM-DD)
+  ```
+
+- 获取个股量价分析
+  ```
+  GET /api/volume-price/stock
+  参数：
+  - ts_codes: string[]
+  - trade_date: string (YYYY-MM-DD)
+  ```

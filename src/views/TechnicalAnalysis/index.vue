@@ -43,7 +43,7 @@
 
       <div v-loading="loading">
         <!-- 技术指标概览 -->
-        <div class="overview-section" v-if="data">
+        <div class="overview-section" v-if="latestData">
           <el-row :gutter="20">
             <el-col :span="6">
               <el-card shadow="hover">
@@ -53,19 +53,19 @@
                   </div>
                 </template>
                 <div class="trend-info">
-                  <p>短期趋势: <span :class="data?.trend?.short_term">{{ data?.trend?.short_term }}</span></p>
-                  <p>中期趋势: <span :class="data?.trend?.medium_term">{{ data?.trend?.medium_term }}</span></p>
-                  <p>长期趋势: <span :class="data?.trend?.long_term">{{ data?.trend?.long_term }}</span></p>
-                  <p v-if="data?.trend?.ma_cross?.golden_cross" class="signal">
+                  <p>短期趋势: <span :class="latestData?.trend.short_term">{{ latestData?.trend.short_term }}</span></p>
+                  <p>中期趋势: <span :class="latestData?.trend.medium_term">{{ latestData?.trend.medium_term }}</span></p>
+                  <p>长期趋势: <span :class="latestData?.trend.long_term">{{ latestData?.trend.long_term }}</span></p>
+                  <p v-if="latestData?.trend.ma_cross.golden_cross" class="signal">
                     <el-tag type="success">金叉信号</el-tag>
                   </p>
-                  <p v-if="data?.trend?.ma_cross?.death_cross" class="signal">
+                  <p v-if="latestData?.trend.ma_cross.death_cross" class="signal">
                     <el-tag type="danger">死叉信号</el-tag>
                   </p>
                 </div>
               </el-card>
             </el-col>
-            
+
             <el-col :span="6">
               <el-card shadow="hover">
                 <template #header>
@@ -74,13 +74,13 @@
                   </div>
                 </template>
                 <div class="macd-info">
-                  <p>趋势: <span :class="data?.macd?.trend">{{ data?.macd?.trend }}</span></p>
-                  <p>差值: {{ data?.macd?.divergence.toFixed(2) }}</p>
-                  <p>信号: <el-tag :type="getMacdTagType(data?.macd?.divergence)">{{ getMacdSignalText(data?.macd?.divergence) }}</el-tag></p>
+                  <p>趋势: <span :class="latestData?.macd.trend">{{ latestData?.macd.trend }}</span></p>
+                  <p>差值: {{ latestData?.macd.divergence.toFixed(2) }}</p>
+                  <p>信号: <el-tag :type="getMacdTagType(latestData?.macd.divergence)">{{ getMacdSignalText(latestData?.macd.divergence) }}</el-tag></p>
                 </div>
               </el-card>
             </el-col>
-            
+
             <el-col :span="6">
               <el-card shadow="hover">
                 <template #header>
@@ -89,18 +89,18 @@
                   </div>
                 </template>
                 <div class="kdj-info">
-                  <p>K值: {{ data?.kdj?.k.toFixed(2) }}</p>
-                  <p>D值: {{ data?.kdj?.d.toFixed(2) }}</p>
-                  <p>J值: {{ data?.kdj?.j.toFixed(2) }}</p>
-                  <p>信号: 
-                    <el-tag :type="getKdjTagType(data?.kdj?.signal)">
-                      {{ getKdjSignalText(data?.kdj?.signal) }}
+                  <p>K值: {{ latestData?.kdj.k.toFixed(2) }}</p>
+                  <p>D值: {{ latestData?.kdj.d.toFixed(2) }}</p>
+                  <p>J值: {{ latestData?.kdj.j.toFixed(2) }}</p>
+                  <p>信号:
+                    <el-tag :type="getKdjTagType(latestData?.kdj.signal)">
+                      {{ getKdjSignalText(latestData?.kdj.signal) }}
                     </el-tag>
                   </p>
                 </div>
               </el-card>
             </el-col>
-            
+
             <el-col :span="6">
               <el-card shadow="hover">
                 <template #header>
@@ -109,9 +109,9 @@
                   </div>
                 </template>
                 <div class="rsi-info">
-                  <p>RSI(6): {{ data?.rsi?.rsi6.toFixed(2) }}</p>
-                  <p>RSI(12): {{ data?.rsi?.rsi12.toFixed(2) }}</p>
-                  <p>RSI(24): {{ data?.rsi?.rsi24.toFixed(2) }}</p>
+                  <p>RSI(6): {{ latestData?.rsi.rsi6.toFixed(2) }}</p>
+                  <p>RSI(12): {{ latestData?.rsi.rsi12.toFixed(2) }}</p>
+                  <p>RSI(24): {{ latestData?.rsi.rsi24.toFixed(2) }}</p>
                 </div>
               </el-card>
             </el-col>
@@ -121,31 +121,33 @@
         <!-- 更多分析内容将在这里添加 -->
         <el-tabs v-model="activeTab" class="analysis-tabs">
           <el-tab-pane label="趋势分析" name="trend">
-            <div class="chart-section" v-if="data?.trend">
-              <TrendChart :price-data="priceData" />
+            <div class="chart-section" v-if="data?.data.length">
+              <div class="chart-container">
+                <TrendChart :price-data="priceData" />
+              </div>
               <div class="analysis-text">
                 <h3>趋势分析结果</h3>
-                <el-descriptions :column="2" border v-if="data?.trend">
+                <el-descriptions :column="2" border v-if="latestData?.trend">
                   <el-descriptions-item label="短期趋势">
-                    <el-tag :type="getTrendTagType(data.trend.short_term)">
-                      {{ data.trend.short_term }}
+                    <el-tag :type="getTrendTagType(latestData.trend.short_term)">
+                      {{ latestData.trend.short_term }}
                     </el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="中期趋势">
-                    <el-tag :type="getTrendTagType(data.trend.medium_term)">
-                      {{ data.trend.medium_term }}
+                    <el-tag :type="getTrendTagType(latestData.trend.medium_term)">
+                      {{ latestData.trend.medium_term }}
                     </el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="长期趋势">
-                    <el-tag :type="getTrendTagType(data.trend.long_term)">
-                      {{ data.trend.long_term }}
+                    <el-tag :type="getTrendTagType(latestData.trend.long_term)">
+                      {{ latestData.trend.long_term }}
                     </el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="均线信号">
                     <div class="signal-tags">
-                      <el-tag v-if="data.trend.ma_cross.golden_cross" type="success">金叉</el-tag>
-                      <el-tag v-if="data.trend.ma_cross.death_cross" type="danger">死叉</el-tag>
-                      <el-tag v-if="!data.trend.ma_cross.golden_cross && !data.trend.ma_cross.death_cross" type="info">无信号</el-tag>
+                      <el-tag v-if="latestData.trend.ma_cross.golden_cross" type="success">金叉</el-tag>
+                      <el-tag v-if="latestData.trend.ma_cross.death_cross" type="danger">死叉</el-tag>
+                      <el-tag v-if="!latestData.trend.ma_cross.golden_cross && !latestData.trend.ma_cross.death_cross" type="info">无信号</el-tag>
                     </div>
                   </el-descriptions-item>
                 </el-descriptions>
@@ -153,22 +155,22 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="MACD分析" name="macd">
-            <div class="chart-section" v-if="data?.macd">
+            <div class="chart-section" v-if="latestData?.macd">
               <MacdChart :macd-data="macdData" />
               <div class="analysis-text">
                 <h3>MACD分析结果</h3>
-                <el-descriptions :column="2" border v-if="data?.macd">
+                <el-descriptions :column="2" border v-if="latestData?.macd">
                   <el-descriptions-item label="MACD趋势">
-                    <el-tag :type="getTrendTagType(data.macd.trend)">
-                      {{ data.macd.trend }}
+                    <el-tag :type="getTrendTagType(latestData.macd.trend)">
+                      {{ latestData.macd.trend }}
                     </el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="MACD差值">
-                    {{ data.macd.divergence.toFixed(2) }}
+                    {{ latestData.macd.divergence.toFixed(2) }}
                   </el-descriptions-item>
                   <el-descriptions-item label="信号">
-                    <el-tag :type="getMacdTagType(data.macd.divergence)">
-                      {{ getMacdSignalText(data.macd.divergence) }}
+                    <el-tag :type="getMacdTagType(latestData.macd.divergence)">
+                      {{ getMacdSignalText(latestData.macd.divergence) }}
                     </el-tag>
                   </el-descriptions-item>
                 </el-descriptions>
@@ -176,17 +178,17 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="KDJ分析" name="kdj">
-            <div class="chart-section" v-if="data?.kdj">
+            <div class="chart-section" v-if="latestData?.kdj">
               <KdjChart :kdj-data="kdjData" />
               <div class="analysis-text">
                 <h3>KDJ分析结果</h3>
-                <el-descriptions :column="2" border v-if="data?.kdj">
-                  <el-descriptions-item label="K值">{{ data.kdj.k.toFixed(2) }}</el-descriptions-item>
-                  <el-descriptions-item label="D值">{{ data.kdj.d.toFixed(2) }}</el-descriptions-item>
-                  <el-descriptions-item label="J值">{{ data.kdj.j.toFixed(2) }}</el-descriptions-item>
+                <el-descriptions :column="2" border v-if="latestData?.kdj">
+                  <el-descriptions-item label="K值">{{ latestData.kdj.k.toFixed(2) }}</el-descriptions-item>
+                  <el-descriptions-item label="D值">{{ latestData.kdj.d.toFixed(2) }}</el-descriptions-item>
+                  <el-descriptions-item label="J值">{{ latestData.kdj.j.toFixed(2) }}</el-descriptions-item>
                   <el-descriptions-item label="信号">
-                    <el-tag :type="getKdjTagType(data.kdj.signal)">
-                      {{ getKdjSignalText(data.kdj.signal) }}
+                    <el-tag :type="getKdjTagType(latestData.kdj.signal)">
+                      {{ getKdjSignalText(latestData.kdj.signal) }}
                     </el-tag>
                   </el-descriptions-item>
                 </el-descriptions>
@@ -194,26 +196,26 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="RSI分析" name="rsi">
-            <div class="chart-section" v-if="data?.rsi">
+            <div class="chart-section" v-if="latestData?.rsi">
               <div class="analysis-text">
                 <h3>RSI分析结果</h3>
-                <el-descriptions :column="2" border v-if="data?.rsi">
+                <el-descriptions :column="2" border v-if="latestData?.rsi">
                   <el-descriptions-item label="RSI(6)">
-                    {{ data.rsi.rsi6.toFixed(2) }}
-                    <el-tag :type="getRsiTagType(data.rsi.rsi6)" size="small" style="margin-left: 8px">
-                      {{ getRsiSignalText(data.rsi.rsi6) }}
+                    {{ latestData.rsi.rsi6.toFixed(2) }}
+                    <el-tag :type="getRsiTagType(latestData.rsi.rsi6)" size="small" style="margin-left: 8px">
+                      {{ getRsiSignalText(latestData.rsi.rsi6) }}
                     </el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="RSI(12)">
-                    {{ data.rsi.rsi12.toFixed(2) }}
-                    <el-tag :type="getRsiTagType(data.rsi.rsi12)" size="small" style="margin-left: 8px">
-                      {{ getRsiSignalText(data.rsi.rsi12) }}
+                    {{ latestData.rsi.rsi12.toFixed(2) }}
+                    <el-tag :type="getRsiTagType(latestData.rsi.rsi12)" size="small" style="margin-left: 8px">
+                      {{ getRsiSignalText(latestData.rsi.rsi12) }}
                     </el-tag>
                   </el-descriptions-item>
                   <el-descriptions-item label="RSI(24)">
-                    {{ data.rsi.rsi24.toFixed(2) }}
-                    <el-tag :type="getRsiTagType(data.rsi.rsi24)" size="small" style="margin-left: 8px">
-                      {{ getRsiSignalText(data.rsi.rsi24) }}
+                    {{ latestData.rsi.rsi24.toFixed(2) }}
+                    <el-tag :type="getRsiTagType(latestData.rsi.rsi24)" size="small" style="margin-left: 8px">
+                      {{ getRsiSignalText(latestData.rsi.rsi24) }}
                     </el-tag>
                   </el-descriptions-item>
                 </el-descriptions>
@@ -230,7 +232,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getTechnicalIndicators } from '@/services/technical'
-import type { TechnicalAnalysis } from '@/types/technical'
+import type { TechnicalResponse } from '@/types/technical'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import TrendChart from '@/components/TechnicalCharts/TrendChart.vue'
@@ -247,7 +249,7 @@ interface StockSuggestion {
 
 const route = useRoute()
 const loading = ref(false)
-const data = ref<TechnicalAnalysis>()
+const data = ref<TechnicalResponse['data']>()
 const searchInput = ref('')
 const tsCode = ref(route.query.ts_code as string || '')
 const date = ref(route.query.date as string || '')
@@ -255,29 +257,35 @@ const activeTab = ref('trend')
 
 // 图表数据计算
 const priceData = computed(() => {
-  if (!data.value) return {
-    dates: [],
-    prices: [],
-    ma5: [],
-    ma10: [],
-    ma20: [],
-    ma30: [],
-    volume: []
+  if (!data.value?.data || data.value.data.length === 0) {
+    return {
+      dates: [],
+      prices: [],
+      ma5: [],
+      ma10: [],
+      ma20: [],
+      ma30: [],
+      volume: []
+    }
   }
 
+  const prices = data.value.data.map(item => item.close)
+  const dates = data.value.data.map(item => item.trade_date)
+  const volume = data.value.data.map(item => item.volume)
+
   return {
-    dates: data.value.dates,
-    prices: data.value.prices,
-    ma5: data.value.ma5,
-    ma10: data.value.ma10,
-    ma20: data.value.ma20,
-    ma30: data.value.ma30,
-    volume: data.value.volume
+    dates,
+    prices,
+    ma5: calculateMA(prices, 5),
+    ma10: calculateMA(prices, 10),
+    ma20: calculateMA(prices, 20),
+    ma30: calculateMA(prices, 30),
+    volume
   }
 })
 
 const macdData = computed(() => {
-  if (!data.value) return {
+  if (!data.value?.data) return {
     dates: [],
     dif: [],
     dea: [],
@@ -285,15 +293,15 @@ const macdData = computed(() => {
   }
 
   return {
-    dates: data.value.dates,
-    dif: data.value.macd.dif,
-    dea: data.value.macd.dea,
-    macd: data.value.macd.hist
+    dates: data.value.data.map(item => item.trade_date),
+    dif: data.value.data.map(item => item.macd.dif),
+    dea: data.value.data.map(item => item.macd.dea),
+    macd: data.value.data.map(item => item.macd.macd)
   }
 })
 
 const kdjData = computed(() => {
-  if (!data.value) return {
+  if (!data.value?.data) return {
     dates: [],
     k: [],
     d: [],
@@ -301,12 +309,29 @@ const kdjData = computed(() => {
   }
 
   return {
-    dates: data.value.dates,
-    k: data.value.kdj.k_values,
-    d: data.value.kdj.d_values,
-    j: data.value.kdj.j_values
+    dates: data.value.data.map(item => item.trade_date),
+    k: data.value.data.map(item => item.kdj.k),
+    d: data.value.data.map(item => item.kdj.d),
+    j: data.value.data.map(item => item.kdj.j)
   }
 })
+
+// 添加 MA 计算函数
+function calculateMA(data: number[], days: number) {
+  const result = []
+  for (let i = 0; i < data.length; i++) {
+    if (i < days - 1) {
+      result.push(null)
+      continue
+    }
+    let sum = 0
+    for (let j = 0; j < days; j++) {
+      sum += data[i - j]
+    }
+    result.push(+(sum / days).toFixed(2))
+  }
+  return result
+}
 
 // 辅助函数
 const getTrendTagType = (trend: string) => {
@@ -379,7 +404,7 @@ const searchStocks = async (query: string, cb: (suggestions: StockSuggestion[]) 
     cb([])
     return
   }
-  
+
   try {
     const response = await axios.get(`/api/stock/search?query=${encodeURIComponent(query)}`)
     if (response.data && Array.isArray(response.data)) {
@@ -408,11 +433,12 @@ const fetchData = async () => {
     ElMessage.warning('请输入股票代码')
     return
   }
-  
+
   loading.value = true
   try {
     const response = await getTechnicalIndicators(tsCode.value, date.value)
-    data.value = response.data.data
+    data.value = response.data
+    console.log('Technical data:', data.value)
   } catch (error) {
     ElMessage.error('获取技术指标数据失败')
     console.error(error)
@@ -432,6 +458,19 @@ onMounted(() => {
     fetchData()
   }
 })
+
+// 添加一个计算属性来获取最新的技术指标数据
+const latestData = computed(() => {
+  if (!data.value?.data || data.value.data.length === 0) return null
+  return data.value.data[data.value.data.length - 1]
+})
+
+// 确保组件已经在 components 中注册
+const components = {
+  TrendChart,
+  MacdChart,
+  KdjChart
+}
 </script>
 
 <style lang="scss" scoped>
@@ -460,7 +499,7 @@ onMounted(() => {
 
     .el-card {
       height: 100%;
-      
+
       .el-card__header {
         padding: 10px 20px;
         font-weight: bold;
@@ -479,10 +518,16 @@ onMounted(() => {
       padding: 20px;
       background-color: #f5f7fa;
       border-radius: 4px;
-      
+
+      .chart-container {
+        width: 100%;
+        min-height: 400px;
+        margin-bottom: 20px;
+      }
+
       .analysis-text {
         margin-top: 20px;
-        
+
         h3 {
           margin-bottom: 16px;
           font-size: 16px;

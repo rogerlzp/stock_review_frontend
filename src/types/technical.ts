@@ -11,6 +11,9 @@ export interface TrendAnalysis {
 export interface MacdSignal {
   trend: 'up' | 'down';
   divergence: number;
+  macd: number;
+  dif: number;
+  dea: number;
 }
 
 export interface KdjAnalysis {
@@ -53,5 +56,29 @@ export interface TechnicalAnalysis {
 export interface TechnicalResponse {
   code: number;
   message: string;
-  data: TechnicalAnalysis;
+  data: {
+    ts_code: string;
+    period: number;
+    start_date: string;
+    end_date: string;
+    data: DailyTechnicalData[];
+  }
+}
+
+export interface DailyTechnicalData {
+  trade_date: string;
+  trend: TrendAnalysis;
+  macd: MacdSignal;
+  kdj: KdjAnalysis;
+  rsi: RsiAnalysis;
+  volatility: VolatilityAnalysis;
+  price: PriceData;
+  volume: VolumeData;
+}
+
+export interface VolumeData {
+  volume: number;
+  amount: number;
+  turnover_rate: number;
+  turnover_rate_free: number;
 }

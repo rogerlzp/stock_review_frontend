@@ -144,3 +144,26 @@ export interface ConceptStockResponseData {
 }
 
 export type ConceptStockResponse = BaseResponse<ConceptStockResponseData>
+
+// 市场趋势数据
+export interface MarketTrendData {
+  dates: string[]
+  metrics: {
+    [key: string]: number[]
+  }
+}
+
+export interface MarketTrendResponse {
+  data: MarketTrendData
+}
+
+export const METRIC_LABELS: Record<string, string> = {
+  total_mv: '总市值(亿)',
+  float_mv: '流通市值(亿)',
+  turnover_rate: '换手率(%)',
+  pe: '市盈率',
+  pe_ttm: '市盈率(TTM)',
+  pb: '市净率',
+  net_buy_amount: '北向资金净买入(亿)',
+  total_margin: '融资融券余额(亿)'
+}

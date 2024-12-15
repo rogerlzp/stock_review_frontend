@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 
@@ -24,8 +24,17 @@ let chart: echarts.ECharts | null = null
 const initChart = () => {
   if (!chartRef.value) return
   
-  chart = echarts.init(chartRef.value)
-  updateChart()
+  // 等待 DOM 更新完成
+  nextTick(() => {
+    // 确保容器有宽高
+    if (chartRef.value.offsetWidth === 0 || chartRef.value.offsetHeight === 0) {
+      console.warn('Chart container has no size')
+      return
+    }
+    
+    chart = echarts.init(chartRef.value)
+    updateChart()
+  })
 }
 
 const updateChart = () => {

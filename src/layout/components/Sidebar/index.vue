@@ -10,7 +10,7 @@
       :default-openeds="defaultOpeneds"
     >
       <template v-for="item in menuItems" :key="item.path">
-        <el-menu-item-group>
+        <el-sub-menu :index="item.path">
           <template #title>
             <el-icon v-if="item.icon"><component :is="item.icon" /></el-icon>
             <span>{{ item.title }}</span>
@@ -19,63 +19,76 @@
             v-for="child in item.children"
             :key="child.path"
             :index="child.path"
+            :class="{ 'is-active': isActive(child.path) }"
           >
-            {{ child.title }}
+            <template #title>
+              <el-icon v-if="child.icon"><component :is="child.icon" /></el-icon>
+              <span>{{ child.title }}</span>
+            </template>
           </el-menu-item>
-        </el-menu-item-group>
+        </el-sub-menu>
       </template>
     </el-menu>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed, ref } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { menuItems } from './menu'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-export default defineComponent({
-  name: 'Sidebar',
-  setup() {
-    const route = useRoute()
-    const activeMenu = computed(() => route.path)
-    const defaultOpeneds = ref(['1']) // 默认展开所有菜单组
+const route = useRoute()
+const activeMenu = computed(() => route.path)
+const defaultOpeneds = ref(['/market-review']) // 默认展开市场复盘菜单
 
-    return {
-      menuItems,
-      activeMenu,
-      defaultOpeneds
-    }
-  }
-})
+const isActive = (path: string) => {
+  return route.path === path
+}
 </script>
 
 <style scoped>
 .sidebar {
   height: 100%;
+  background-color: #304156;
 }
 
 .menu {
-  height: 100%;
   border: none;
+  height: 100%;
+  width: 100%;
 }
 
 :deep(.el-menu-item) {
-  border-left: 3px solid transparent;
+  &:hover {
+    background-color: #263445 !important;
+  }
+
+  &.is-active {
+    background-color: #1890ff !important;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #fff;
+    }
+  }
 }
 
-:deep(.el-menu-item.is-active) {
-  border-left: 3px solid #409EFF;
-  background-color: #263445 !important;
+:deep(.el-sub-menu__title) {
+  &:hover {
+    background-color: #263445 !important;
+  }
 }
 
-:deep(.el-menu-item-group__title) {
-  padding: 12px 20px;
-  font-size: 14px;
-  color: #bfcbd9;
-}
-
-:deep(.el-menu-item) {
-  min-width: 160px;
-  padding-left: 40px !important;
+.el-icon {
+  margin-right: 12px;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
 }
 </style>

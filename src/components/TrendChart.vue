@@ -3,11 +3,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, watch, withDefaults, defineProps } from 'vue'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   priceData: {
     dates: string[]
     prices: number[]
@@ -15,7 +15,15 @@ const props = defineProps<{
     ma10: number[]
     ma20: number[]
   }
-}>()
+}>(), {
+  priceData: () => ({
+    dates: [],
+    prices: [],
+    ma5: [],
+    ma10: [],
+    ma20: []
+  })
+})
 
 const chartRef = ref<HTMLElement | null>(null)
 let chart: echarts.ECharts | null = null
@@ -23,76 +31,87 @@ let chart: echarts.ECharts | null = null
 const initChart = () => {
   if (!chartRef.value) return
   
-  // 确保容器有宽高
-  chartRef.value.style.width = '100%'
-  chartRef.value.style.height = '400px'
-  
-  // 初始化图表
-  chart = echarts.init(chartRef.value)
-  
-  // 设置图表选项
-  const option: EChartsOption = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross'
-      }
-    },
-    legend: {
-      data: ['价格', 'MA5', 'MA10', 'MA20']
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: props.priceData.dates,
-      boundaryGap: false
-    },
-    yAxis: {
-      type: 'value',
-      scale: true
-    },
-    series: [
-      {
-        name: '价格',
-        type: 'line',
-        data: props.priceData.prices,
-        itemStyle: {
-          color: '#409EFF'
-        }
-      },
-      {
-        name: 'MA5',
-        type: 'line',
-        data: props.priceData.ma5,
-        itemStyle: {
-          color: '#67C23A'
-        }
-      },
-      {
-        name: 'MA10',
-        type: 'line',
-        data: props.priceData.ma10,
-        itemStyle: {
-          color: '#E6A23C'
-        }
-      },
-      {
-        name: 'MA20',
-        type: 'line',
-        data: props.priceData.ma20,
-        itemStyle: {
-          color: '#F56C6C'
-        }
-      }
-    ]
+  // 确保数据存在且有效
+  if (!props.priceData || !Array.isArray(props.priceData.dates)) {
+    console.warn('Invalid or missing price data')
+    return
   }
-  
-  chart.setOption(option)
+
+  // 等待 DOM 更新完成
+  nextTick(() => {
+    // 确保容器有宽高
+    if (chartRef.value.offsetWidth === 0 || chartRef.value.offsetHeight === 0) {
+      console.warn('Chart container has no size')
+      return
+    }
+    
+    // 初始化图表
+    chart = echarts.init(chartRef.value)
+    
+    // 设置图表选项
+    const option: EChartsOption = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross'
+        }
+      },
+      legend: {
+        data: ['价格', 'MA5', 'MA10', 'MA20']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: props.priceData.dates,
+        boundaryGap: false
+      },
+      yAxis: {
+        type: 'value',
+        scale: true
+      },
+      series: [
+        {
+          name: '价格',
+          type: 'line',
+          data: props.priceData.prices,
+          itemStyle: {
+            color: '#409EFF'
+          }
+        },
+        {
+          name: 'MA5',
+          type: 'line',
+          data: props.priceData.ma5,
+          itemStyle: {
+            color: '#67C23A'
+          }
+        },
+        {
+          name: 'MA10',
+          type: 'line',
+          data: props.priceData.ma10,
+          itemStyle: {
+            color: '#E6A23C'
+          }
+        },
+        {
+          name: 'MA20',
+          type: 'line',
+          data: props.priceData.ma20,
+          itemStyle: {
+            color: '#F56C6C'
+          }
+        }
+      ]
+    }
+    
+    chart.setOption(option)
+  })
 }
 
 // 监听数据变化
