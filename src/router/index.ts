@@ -62,9 +62,17 @@ export const routes: RouteRecordRaw[] = [
       {
         path: 'technical',
         name: 'Technical',
-        component: () => import('@/views/MarketReview/Technical/index.vue'),
+        component: () => import('@/views/MarketReview/Technical.vue'),
         meta: {
           title: '技术分析'
+        }
+      },
+      {
+        path: 'stock-analysis',
+        name: 'StockAnalysis',
+        component: () => import('@/views/MarketReview/StockAnalysis.vue'),
+        meta: {
+          title: '个股分析'
         }
       },
       {

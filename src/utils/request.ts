@@ -24,11 +24,21 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 直接返回响应数据，因为后端返回的数据结构已经是 { data: ... } 的格式
-    return response.data
+    // 检查响应数据结构
+    const responseData = response.data
+    
+    // 如果响应是一个对象，并且只包含 data 字段，则返回 data 的值
+    if (responseData && typeof responseData === 'object') {
+      if ('data' in responseData && Object.keys(responseData).length === 1) {
+        return responseData.data
+      }
+    }
+    
+    // 否则返回完整的响应数据
+    return responseData
   },
   (error) => {
-    console.error('请求错误: ' + error)
+    console.error('请求错误:', error)
     return Promise.reject(error)
   }
 )

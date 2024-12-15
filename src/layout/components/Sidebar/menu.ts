@@ -49,6 +49,11 @@ export const menuItems: MenuItem[] = [
         icon: 'TrendCharts'
       },
       {
+        path: '/market-review/stock-analysis',
+        title: '个股分析',
+        icon: 'DataAnalysis'
+      },
+      {
         path: '/market-review/stock-compare',
         title: '股票对比',
         icon: 'Document'
@@ -112,6 +117,14 @@ export const menu = [
     meta: {
       title: '技术分析',
       icon: 'technical'
+    }
+  },
+  {
+    path: '/market-review/stock-analysis',
+    name: 'StockAnalysis',
+    meta: {
+      title: '个股分析',
+      icon: 'stock'
     }
   }
 ]
