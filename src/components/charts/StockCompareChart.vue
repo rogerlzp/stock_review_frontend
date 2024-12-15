@@ -34,13 +34,15 @@ interface StockLimitData {
 interface StockData {
   ts_code: string
   name: string
+  industry: string
+  market: string
   daily: StockDailyData[]
   limit: StockLimitData[]
 }
 
 interface StockComparisonData {
-  stock1: StockData
-  stock2: StockData
+  base_stock: StockData
+  compare_stocks: StockData[]
 }
 
 const props = defineProps<{
@@ -65,7 +67,10 @@ const createCharts = () => {
 }
 
 const updateCharts = () => {
-  if (!props.data?.stock1?.daily || !props.data?.stock2?.daily) return
+  if (!props.data?.base_stock?.daily) return
+
+  const baseStock = props.data.base_stock
+  const compareStock = props.data.compare_stocks[0]
 
   // 成交量对比图表配置
   const volumeOptions: EChartsOption = {
@@ -82,28 +87,28 @@ const updateCharts = () => {
       }
     },
     legend: { 
-      data: [props.data.stock1.name, props.data.stock2.name],
+      data: [baseStock.name].concat(compareStock ? [compareStock.name] : []),
       selected: {
-        [props.data.stock1.name]: true,
-        [props.data.stock2.name]: true
+        [baseStock.name]: true,
+        ...(compareStock ? { [compareStock.name]: true } : {})
       }
     },
     xAxis: { 
       type: 'category',
-      data: props.data.stock1.daily.map(item => item.trade_date)
+      data: baseStock.daily.map(item => item.trade_date)
     },
     yAxis: { type: 'value' },
     series: [
       {
-        name: props.data.stock1.name,
+        name: baseStock.name,
         type: 'bar',
-        data: props.data.stock1.daily.map(item => item.volume)
+        data: baseStock.daily.map(item => item.volume)
       },
-      {
-        name: props.data.stock2.name,
+      ...(compareStock ? [{
+        name: compareStock.name,
         type: 'bar',
-        data: props.data.stock2.daily.map(item => item.volume)
-      }
+        data: compareStock.daily.map(item => item.volume)
+      }] : [])
     ]
   }
 
@@ -122,28 +127,28 @@ const updateCharts = () => {
       }
     },
     legend: { 
-      data: [props.data.stock1.name, props.data.stock2.name],
+      data: [baseStock.name].concat(compareStock ? [compareStock.name] : []),
       selected: {
-        [props.data.stock1.name]: true,
-        [props.data.stock2.name]: true
+        [baseStock.name]: true,
+        ...(compareStock ? { [compareStock.name]: true } : {})
       }
     },
     xAxis: { 
       type: 'category',
-      data: props.data.stock1.daily.map(item => item.trade_date)
+      data: baseStock.daily.map(item => item.trade_date)
     },
     yAxis: { type: 'value' },
     series: [
       {
-        name: props.data.stock1.name,
+        name: baseStock.name,
         type: 'line',
-        data: props.data.stock1.daily.map(item => item.relative_chg)
+        data: baseStock.daily.map(item => item.relative_chg)
       },
-      {
-        name: props.data.stock2.name,
+      ...(compareStock ? [{
+        name: compareStock.name,
         type: 'line',
-        data: props.data.stock2.daily.map(item => item.relative_chg)
-      }
+        data: compareStock.daily.map(item => item.relative_chg)
+      }] : [])
     ]
   }
 
